@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:live_weather_app_flutter/Constants/api_key.dart';
 import 'package:live_weather_app_flutter/Widgets/additional_info.dart';
 import 'package:live_weather_app_flutter/Widgets/hourly_weather_card.dart';
 import 'package:live_weather_app_flutter/Widgets/main_weather_card.dart';
+import 'package:http/http.dart' as http;
 
 class WeatherScreen extends StatefulWidget {
   const WeatherScreen({super.key});
@@ -11,6 +13,15 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
+  Future getCurrentWeatherStatus() async {
+    String cityName = 'Dehradun';
+    final res = await http.get(
+      Uri.parse(
+        'https://api.openweathermap.org/data/2.5/weather?q=$cityName&APPID=$apiKey',
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +35,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              print('a');
+            },
             icon: const Icon(Icons.refresh_rounded),
           ),
         ],
@@ -52,12 +65,26 @@ class _WeatherScreenState extends State<WeatherScreen> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  HourlyWeatherCard(),
-                  HourlyWeatherCard(),
-                  HourlyWeatherCard(),
-                  HourlyWeatherCard(),
-                  HourlyWeatherCard(),
-                  HourlyWeatherCard(),
+                  HourlyWeatherCard(
+                    time: '03:00',
+                    temperature: '300K',
+                    icon: Icons.cloud,
+                  ),
+                  HourlyWeatherCard(
+                    time: '04:00',
+                    temperature: '300K',
+                    icon: Icons.cloud,
+                  ),
+                  HourlyWeatherCard(
+                    time: '05:00',
+                    temperature: '300K',
+                    icon: Icons.cloud,
+                  ),
+                  HourlyWeatherCard(
+                    time: '06:00',
+                    temperature: '300K',
+                    icon: Icons.cloud,
+                  ),
                 ],
               ),
             ),
@@ -77,9 +104,21 @@ class _WeatherScreenState extends State<WeatherScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                AdditionalInfo(),
-                AdditionalInfo(),
-                AdditionalInfo(),
+                AdditionalInfo(
+                  icon: Icons.water_drop,
+                  label: 'Humidity',
+                  value: '91',
+                ),
+                AdditionalInfo(
+                  icon: Icons.air,
+                  label: 'Wind Speed',
+                  value: '8.5',
+                ),
+                AdditionalInfo(
+                  icon: Icons.water_drop,
+                  label: 'Pressure',
+                  value: '1020',
+                ),
               ],
             ),
           ],
