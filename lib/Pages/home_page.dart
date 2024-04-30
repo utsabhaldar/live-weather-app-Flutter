@@ -1,8 +1,10 @@
+import 'dart:convert';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:live_weather_app_flutter/Constants/api_key.dart';
 import 'package:live_weather_app_flutter/Widgets/additional_info.dart';
 import 'package:live_weather_app_flutter/Widgets/hourly_weather_card.dart';
-import 'package:live_weather_app_flutter/Widgets/main_weather_card.dart';
 import 'package:http/http.dart' as http;
 
 class WeatherScreen extends StatefulWidget {
@@ -13,13 +15,33 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
+  double temp = 0;
+  @override
+  void initState() {
+    super.initState();
+    getCurrentWeatherStatus();
+  }
+
   Future getCurrentWeatherStatus() async {
-    String cityName = 'Dehradun';
-    final res = await http.get(
-      Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?q=$cityName&APPID=$apiKey',
-      ),
-    );
+    try {
+      String cityName = 'Dehradun';
+      final res = await http.get(
+        Uri.parse(
+          'https://api.openweathermap.org/data/2.5/weather?q=$cityName&APPID=$apiKey',
+        ),
+      );
+      final data = jsonDecode(res.body);
+      // if (data['cod'] != '200') {
+      //   throw 'An unexpected error occured!';
+      // }
+
+      setState(() {
+        temp = (data['main']['temp']);
+        temp = temp - 270;
+      });
+    } catch (e) {
+      throw e.toString();
+    }
   }
 
   @override
@@ -27,7 +49,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Weather Checker',
+          'Weather Live',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -42,26 +64,72 @@ class _WeatherScreenState extends State<WeatherScreen> {
           ),
         ],
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(20.0),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            MainWeatherCard(),
             SizedBox(
+              width: double.infinity,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                      sigmaX: 10,
+                      sigmaY: 10,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        children: [
+                          Text(
+                            temp != 270 ? '${temp.toStringAsFixed(2)}°C' : '0',
+                            style: const TextStyle(
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Icon(
+                            Icons.cloud,
+                            size: 70,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text(
+                            'Rain',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w200,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
               height: 20,
             ),
-            Text(
+            const Text(
               "Weather forecast",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            SingleChildScrollView(
+            const SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
@@ -88,20 +156,20 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            Text(
+            const Text(
               "Additional info",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 AdditionalInfo(
