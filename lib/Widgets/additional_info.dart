@@ -13,29 +13,38 @@ class AdditionalInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          size: 32,
+    return SizedBox(
+      width: 100,
+      height: 115,
+      child: Card(
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 8,
+            ),
+            Icon(
+              icon,
+              size: 32,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Text(
+              label,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(
-          height: 8,
-        ),
-        Text(
-          label,
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
